@@ -10,14 +10,19 @@
             background-color: #121212;
             color: white;
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
         .light-mode {
             background-color: white;
             color: black;
         }
         .container {
-            max-width: 500px;
-            margin: auto;
+            width: 100%;
+            max-width: 400px;
             padding: 20px;
             background: rgba(0, 0, 0, 0.8);
             border-radius: 10px;
@@ -61,25 +66,25 @@
         <input type="password" id="emailPassword" placeholder="Masukkan Password Email">
         <input type="text" id="region" placeholder="Masukkan Daerah Anda">
         <button onclick="registerUser()">✅ Daftar</button>
-
-        <h2>🌤 Cek Cuaca Manual</h2>
-        <input type="text" id="city" placeholder="Masukkan Nama Kota">
-        <button onclick="getWeather()">🌡️ Cek Cuaca</button>
-        <div id="weather-info"></div>
-
-        <h2>🌍 Cuaca Otomatis Berdasarkan Daerah</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Lokasi</th>
-                    <th>Cuaca</th>
-                    <th>Suhu (°C)</th>
-                    <th>Angin (km/jam)</th>
-                </tr>
-            </thead>
-            <tbody id="auto-weather"></tbody>
-        </table>
     </div>
+
+    <h2>🌤 Cek Cuaca Manual</h2>
+    <input type="text" id="city" placeholder="Masukkan Nama Kota">
+    <button onclick="getWeather()">🌡️ Cek Cuaca</button>
+    <div id="weather-info"></div>
+
+    <h2>🌍 Cuaca Otomatis Berdasarkan Daerah</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Lokasi</th>
+                <th>Cuaca</th>
+                <th>Suhu (°C)</th>
+                <th>Angin (km/jam)</th>
+            </tr>
+        </thead>
+        <tbody id="auto-weather"></tbody>
+    </table>
 
     <script>
         function toggleMode() {
@@ -87,26 +92,35 @@
         }
 
         function registerUser() {
-            const user = {
-                username: document.getElementById("username").value,
-                password: document.getElementById("password").value,
-                confirmPassword: document.getElementById("confirmPassword").value,
-                email: document.getElementById("email").value,
-                emailPassword: document.getElementById("emailPassword").value,
-                region: document.getElementById("region").value
-            };
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+            const email = document.getElementById("email").value;
+            const emailPassword = document.getElementById("emailPassword").value;
+            const region = document.getElementById("region").value;
 
-            if (user.password !== user.confirmPassword) {
+            if (!username || !password || !confirmPassword || !email || !emailPassword || !region) {
+                alert("❌ Semua kolom harus diisi!");
+                return;
+            }
+
+            if (password !== confirmPassword) {
                 alert("❌ Password tidak cocok!");
                 return;
             }
+
+            const user = { username, password, email, emailPassword, region };
 
             fetch(`http://${window.location.hostname}:5000/users`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(user)
-            }).then(() => alert("✅ Pendaftaran Berhasil!"))
-              .catch(err => console.error("Error:", err));
+            })
+            .then(() => {
+                alert("✅ Pendaftaran Berhasil!");
+                location.reload();
+            })
+            .catch(err => console.error("Error:", err));
         }
 
         function getWeather() {
