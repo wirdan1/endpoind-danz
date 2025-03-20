@@ -1,0 +1,13 @@
+{
+  "name": "cuaca-web",
+  "version": "1.0.0",
+  "description": "Website Cuaca dengan JSON Server",
+  "main": "index.html",
+  "scripts": {
+    "start": "json-server --watch database.json --port 5000"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "json-server": "^0.17.0"
+  }
+}

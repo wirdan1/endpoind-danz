@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Cuaca & Pendaftaran - Neon Blue</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #0ff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        nav {
+            background-color: #111;
+            padding: 10px;
+        }
+        nav a {
+            color: #0ff;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 18px;
+        }
+        .container {
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #0ff;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 10px;
+            background-color: #111;
+            box-shadow: 0 0 15px #0ff;
+        }
+        h2 {
+            color: #0ff;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            border: 1px solid #0ff;
+            background-color: #222;
+            color: #0ff;
+        }
+        .testimonials {
+            background-color: #222;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 0 15px #0ff;
+        }
+        footer {
+            background-color: #111;
+            padding: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#register">Daftar</a>
+        <a href="#weather">Cek Cuaca</a>
+        <a href="#testimonials">Testimoni</a>
+        <a href="#contact">Kontak</a>
+    </nav>
+
+    <h1>🌟 Selamat Datang di Dashboard Cuaca 🌟</h1>
+    <p>"Jangan biarkan hujan menghentikan langkahmu, tapi jadikan cuaca sebagai sahabat perjalananmu!"</p>
+
+    <div class="container" id="home">
+        <h2>📌 Panduan Penggunaan</h2>
+        <p>✅ Daftar akun dengan mengisi data diri Anda.</p>
+        <p>✅ Setelah daftar, gunakan fitur pencarian cuaca.</p>
+        <p>✅ Masukkan nama kota untuk melihat kondisi cuaca.</p>
+        <p>✅ Data cuaca diperbarui secara real-time!</p>
+    </div>
+
+    <div class="container" id="register">
+        <h2>📍 Daftar Akun</h2>
+        <form onsubmit="event.preventDefault(); registerUser();">
+            <input type="text" id="username" placeholder="Username" required><br>
+            <input type="password" id="password" placeholder="Password" required><br>
+            <input type="email" id="email" placeholder="Email" required><br>
+            <input type="text" id="phone" placeholder="No HP/WhatsApp" required><br>
+            <input type="text" id="region" placeholder="Daerah" required><br>
+            <button type="submit">Daftar</button>
+        </form>
+    </div>
+
+    <div class="container" id="weather">
+        <h2>☁️ Cek Cuaca</h2>
+        <input type="text" id="location" placeholder="Masukkan Nama Kota"><br>
+        <button onclick="getWeather()">Cek Cuaca</button>
+        <p id="weatherResult"></p>
+    </div>
+
+    <div class="testimonials" id="testimonials">
+        <h2>💬 Testimoni Pengguna</h2>
+        <p>🌟 "Website ini sangat membantu saya dalam merencanakan perjalanan!" - Rina</p>
+        <p>🌟 "Sangat mudah digunakan dan tampilannya keren!" - Danu</p>
+        <p>🌟 "Akurasi cuacanya bagus, saya jadi lebih siap sebelum keluar rumah!" - Siti</p>
+    </div>
+
+    <footer id="contact">
+        <h3>📞 Hubungi Kami</h3>
+        <p>Email: support@cuaca.com</p>
+        <p>WhatsApp: +62895323195263</p>
+        <p>&copy; 2025 Cuaca Dashboard. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function registerUser() {
+            const user = {
+                username: document.getElementById("username").value,
+                password: document.getElementById("password").value,
+                email: document.getElementById("email").value,
+                phone: document.getElementById("phone").value,
+                region: document.getElementById("region").value
+            };
+
+            fetch('http://localhost:5000/users')
+                .then(response => response.json())
+                .then(users => {
+                    if (users.some(u => u.username === user.username)) {
+                        alert("❌ Username sudah digunakan!");
+                    } else {
+                        fetch('http://localhost:5000/users', {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(user)
+                        }).then(() => alert("✅ Pendaftaran Berhasil!"));
+                    }
+                });
+        }
+
+        async function getWeather() {
+            const location = document.getElementById("location").value;
+            const apiKey = "060a6bcfa19809c2cd4d97a212b19273";
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&appid=${apiKey}`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.cod !== 200) {
+                    document.getElementById("weatherResult").innerText = "❌ Lokasi tidak ditemukan!";
+                    return;
+                }
+
+                document.getElementById("weatherResult").innerHTML = `
+                    📍 Lokasi: ${data.name} <br>
+                    🌏 Negara: ${data.sys.country} <br>
+                    ☁️ Cuaca: ${data.weather[0].description} <br>
+                    🌡️ Suhu: ${data.main.temp} °C <br>
+                    🌥️ Kelembapan: ${data.main.humidity}% <br>
+                    🌬️ Angin: ${data.wind.speed} km/jam
+                `;
+            } catch (error) {
+                document.getElementById("weatherResult").innerText = "⚠️ Terjadi kesalahan!";
+            }
+        }
+    </script>
+</body>
+</html>
