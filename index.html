@@ -1,167 +1,665 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Cuaca & Pendaftaran</title>
+    <title>YouTube Search & Download</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #6c5ce7;
+            --primary-light: #a29bfe;
+            --secondary: #fd79a8;
+            --dark: #2d3436;
+            --light: #f5f6fa;
+            --gray: #b2bec3;
+            --card-bg: #fff;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --success: #00b894;
+            --warning: #fdcb6e;
+            --danger: #e74c3c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: white;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
             text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+        }
+
+        .tagline {
+            font-size: 1.1rem;
+            color: var(--dark);
+            opacity: 0.8;
+        }
+
+        .search-container {
             display: flex;
-            flex-direction: column;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+
+        .search-box {
+            display: flex;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: var(--shadow);
+            border-radius: 50px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus-within {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 1.2rem 1.5rem;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .search-button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 2rem;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: background 0.3s ease;
+        }
+
+        .search-button:hover {
+            background: var(--primary-light);
+        }
+
+        .results-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .result-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .result-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-channel {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-duration {
+            font-size: 0.8rem;
+            color: var(--primary);
+            font-weight: 500;
+            background: rgba(108, 92, 231, 0.1);
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+        }
+
+        .card-link {
+            display: inline-block;
+            text-decoration: none;
+            color: white;
+            background: var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: background 0.3s ease;
+        }
+
+        .card-link:hover {
+            background: var(--primary-light);
+        }
+
+        .download-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .download-button {
+            flex: 1;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-        }
-        .light-mode {
-            background-color: white;
-            color: black;
-        }
-        .container {
-            width: 100%;
-            max-width: 400px;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            border-radius: 10px;
-        }
-        input, button {
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0;
-            border: none;
-            border-radius: 5px;
-        }
-        button {
-            background-color: blue;
+            text-decoration: none;
             color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .download-mp3 {
+            background: var(--success);
+        }
+
+        .download-mp3:hover {
+            background: #00a884;
+        }
+
+        .download-mp4 {
+            background: var(--warning);
+            color: var(--dark);
+        }
+
+        .download-mp4:hover {
+            background: #f9ca24;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(108, 92, 231, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            color: var(--danger);
+            font-weight: 500;
+        }
+
+        .no-results {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .download-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .modal-message {
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .file-info {
+            background: rgba(108, 92, 231, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            text-align: left;
+            display: none;
+        }
+
+        .file-info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .file-info-label {
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .file-info-value {
+            color: var(--primary);
+        }
+
+        .modal-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(108, 92, 231, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto 1.5rem;
+        }
+
+        .download-link {
+            display: inline-block;
+            text-decoration: none;
+            color: white;
+            background: var(--success);
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .download-link:hover {
+            background: #00a884;
+        }
+
+        .close-modal {
+            display: inline-block;
+            text-decoration: none;
+            color: var(--gray);
+            background: transparent;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            border: 1px solid var(--gray);
             cursor: pointer;
         }
-        button:hover {
-            background-color: darkblue;
+
+        .close-modal:hover {
+            color: var(--dark);
+            border-color: var(--dark);
         }
-        table {
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
+
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding: 2rem 0;
+            color: var(--gray);
+            font-size: 0.9rem;
         }
-        th, td {
-            padding: 10px;
-            border: 1px solid white;
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .results-container {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 1.5rem;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .search-input {
+                padding: 1rem;
+            }
+
+            .download-buttons {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
-
-    <button onclick="toggleMode()">🌗 Ganti Mode</button>
-
     <div class="container">
-        <h2>🌍 Pendaftaran Pengguna</h2>
-        <input type="text" id="username" placeholder="Masukkan Username">
-        <input type="password" id="password" placeholder="Masukkan Password">
-        <input type="password" id="confirmPassword" placeholder="Konfirmasi Password">
-        <input type="email" id="email" placeholder="Masukkan Email">
-        <input type="password" id="emailPassword" placeholder="Masukkan Password Email">
-        <input type="text" id="region" placeholder="Masukkan Daerah Anda">
-        <button onclick="registerUser()">✅ Daftar</button>
+        <header>
+            <div class="logo">Hookrest-Tube</div>
+            <p class="tagline">Search and download your favorite YouTube video/audio</p>
+        </header>
+
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Search for query..." id="searchInput">
+                <button class="search-button" id="searchButton">Search</button>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <p>Searching...</p>
+        </div>
+
+        <div class="error-message" id="errorMessage">
+            <p>Oops! Something went wrong. Please try again.</p>
+        </div>
+
+        <div class="no-results" id="noResults">
+            <p>No results found. Try a different search term.</p>
+        </div>
+
+        <div class="results-container" id="resultsContainer"></div>
     </div>
 
-    <h2>🌤 Cek Cuaca Manual</h2>
-    <input type="text" id="city" placeholder="Masukkan Nama Kota">
-    <button onclick="getWeather()">🌡️ Cek Cuaca</button>
-    <div id="weather-info"></div>
+    <div class="download-modal" id="downloadModal">
+        <div class="modal-content">
+            <h3 class="modal-title" id="modalTitle">Preparing Download</h3>
+            <div class="modal-spinner" id="modalSpinner"></div>
+            <p class="modal-message" id="modalMessage">Please wait while we prepare your download...</p>
+            
+            <div class="file-info" id="fileInfo">
+                <div class="file-info-item">
+                    <span class="file-info-label">Title:</span>
+                    <span class="file-info-value" id="fileTitle">-</span>
+                </div>
+                <div class="file-info-item">
+                    <span class="file-info-label">Format:</span>
+                    <span class="file-info-value" id="fileFormat">-</span>
+                </div>
+                <div class="file-info-item">
+                    <span class="file-info-label">Quality:</span>
+                    <span class="file-info-value" id="fileQuality">-</span>
+                </div>
+                <div class="file-info-item">
+                    <span class="file-info-label">Duration:</span>
+                    <span class="file-info-value" id="fileDuration">-</span>
+                </div>
+            </div>
+            
+            <a href="#" class="download-link" id="downloadLink" style="display: none;">Download Now</a>
+            <button class="close-modal" id="closeModal">Close</button>
+        </div>
+    </div>
 
-    <h2>🌍 Cuaca Otomatis Berdasarkan Daerah</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Lokasi</th>
-                <th>Cuaca</th>
-                <th>Suhu (°C)</th>
-                <th>Angin (km/jam)</th>
-            </tr>
-        </thead>
-        <tbody id="auto-weather"></tbody>
-    </table>
+    <footer>
+        <p>© 2025 Hookrest-Tube | Premium YouTube Search & Download</p>
+    </footer>
 
     <script>
-        function toggleMode() {
-            document.body.classList.toggle("light-mode");
-        }
-
-        function registerUser() {
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
-            const confirmPassword = document.getElementById("confirmPassword").value;
-            const email = document.getElementById("email").value;
-            const emailPassword = document.getElementById("emailPassword").value;
-            const region = document.getElementById("region").value;
-
-            if (!username || !password || !confirmPassword || !email || !emailPassword || !region) {
-                alert("❌ Semua kolom harus diisi!");
-                return;
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const searchButton = document.getElementById('searchButton');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const loading = document.getElementById('loading');
+            const errorMessage = document.getElementById('errorMessage');
+            const noResults = document.getElementById('noResults');
+            const downloadModal = document.getElementById('downloadModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalSpinner = document.getElementById('modalSpinner');
+            const modalMessage = document.getElementById('modalMessage');
+            const fileInfo = document.getElementById('fileInfo');
+            const fileTitle = document.getElementById('fileTitle');
+            const fileFormat = document.getElementById('fileFormat');
+            const fileQuality = document.getElementById('fileQuality');
+            const fileDuration = document.getElementById('fileDuration');
+            const downloadLink = document.getElementById('downloadLink');
+            const closeModal = document.getElementById('closeModal');
+            
+            // Function to search videos
+            async function searchVideos(query) {
+                if (!query.trim()) return;
+                
+                // Show loading state
+                resultsContainer.innerHTML = '';
+                loading.style.display = 'block';
+                errorMessage.style.display = 'none';
+                noResults.style.display = 'none';
+                
+                try {
+                    const response = await fetch(`https://hookrest-api.vercel.app/search/youtube?q=${encodeURIComponent(query)}`);
+                    
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    
+                    const data = await response.json();
+                    
+                    // Hide loading state
+                    loading.style.display = 'none';
+                    
+                    if (data.status && data.result && data.result.length > 0) {
+                        displayResults(data.result);
+                    } else {
+                        noResults.style.display = 'block';
+                    }
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                    loading.style.display = 'none';
+                    errorMessage.style.display = 'block';
+                }
             }
-
-            if (password !== confirmPassword) {
-                alert("❌ Password tidak cocok!");
-                return;
-            }
-
-            const user = { username, password, email, emailPassword, region };
-
-            fetch(`http://${window.location.hostname}:5000/users`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(user)
-            })
-            .then(() => {
-                alert("✅ Pendaftaran Berhasil!");
-                location.reload();
-            })
-            .catch(err => console.error("Error:", err));
-        }
-
-        function getWeather() {
-            const city = document.getElementById("city").value;
-            fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=060a6bcfa19809c2cd4d97a212b19273`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("weather-info").innerHTML = `
-                        <p>📍 Lokasi: ${data.name}</p>
-                        <p>☁️ Cuaca: ${data.weather[0].description}</p>
-                        <p>🌡️ Suhu: ${data.main.temp}°C</p>
-                        <p>💨 Angin: ${data.wind.speed} km/jam</p>
+            
+            // Function to display results
+            function displayResults(results) {
+                resultsContainer.innerHTML = '';
+                
+                results.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'result-card';
+                    
+                    card.innerHTML = `
+                        <img src="${item.imageUrl}" alt="${item.title}" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">${item.title}</h3>
+                            <p class="card-channel">${item.channel}</p>
+                            <div class="card-meta">
+                                <span class="card-duration">${item.duration}</span>
+                                <a href="${item.link}" target="_blank" class="card-link">Watch</a>
+                            </div>
+                            <div class="download-buttons">
+                                <button class="download-button download-mp3" data-url="${item.link}" data-title="${item.title}">
+                                    MP3 Audio
+                                </button>
+                                <button class="download-button download-mp4" data-url="${item.link}" data-title="${item.title}">
+                                    MP4 Video
+                                </button>
+                            </div>
+                        </div>
                     `;
-                })
-                .catch(() => alert("❌ Kota tidak ditemukan!"));
-        }
+                    
+                    resultsContainer.appendChild(card);
+                });
+                
+                // Add animation to cards
+                const cards = document.querySelectorAll('.result-card');
+                cards.forEach((card, index) => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, index * 100);
+                });
 
-        function loadAutoWeather() {
-            fetch(`http://${window.location.hostname}:5000/users`)
-                .then(response => response.json())
-                .then(users => {
-                    users.forEach(user => {
-                        fetch(`https://api.openweathermap.org/data/2.5/weather?q=${user.region}&units=metric&appid=060a6bcfa19809c2cd4d97a212b19273`)
-                            .then(response => response.json())
-                            .then(data => {
-                                const row = `<tr>
-                                    <td>${data.name}</td>
-                                    <td>${data.weather[0].description}</td>
-                                    <td>${data.main.temp}°C</td>
-                                    <td>${data.wind.speed} km/jam</td>
-                                </tr>`;
-                                document.getElementById("auto-weather").innerHTML += row;
-                            })
-                            .catch(() => console.error("❌ Gagal mengambil data cuaca untuk:", user.region));
+                // Add event listeners for download buttons
+                document.querySelectorAll('.download-mp3').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const url = this.getAttribute('data-url');
+                        const title = this.getAttribute('data-title');
+                        downloadFile(url, title, 'mp3');
                     });
-                })
-                .catch(err => console.error("Error mengambil data pengguna:", err));
-        }
+                });
 
-        window.onload = loadAutoWeather;
+                document.querySelectorAll('.download-mp4').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const url = this.getAttribute('data-url');
+                        const title = this.getAttribute('data-title');
+                        downloadFile(url, title, 'mp4');
+                    });
+                });
+            }
+
+            // Function to handle downloads
+            async function downloadFile(url, title, format) {
+                // Show modal
+                downloadModal.style.display = 'flex';
+                modalTitle.textContent = `Preparing ${format.toUpperCase()} Download`;
+                modalSpinner.style.display = 'block';
+                modalMessage.textContent = 'Please wait while we prepare your download...';
+                fileInfo.style.display = 'none';
+                downloadLink.style.display = 'none';
+
+                try {
+                    const apiUrl = format === 'mp3' 
+                        ? `https://hookrest-api.vercel.app/dl/ytmp3?url=${encodeURIComponent(url)}`
+                        : `https://hookrest-api.vercel.app/dl/ytmp4?url=${encodeURIComponent(url)}`;
+                    
+                    const response = await fetch(apiUrl);
+                    
+                    if (!response.ok) {
+                        throw new Error('Download preparation failed');
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (data.status && data.result && data.result.download) {
+                        // Update file info
+                        fileTitle.textContent = data.result.title || title;
+                        fileFormat.textContent = data.result.format || format;
+                        fileQuality.textContent = data.result.quality || 'Standard';
+                        fileDuration.textContent = data.result.duration || 'Unknown';
+                        
+                        // Update modal for successful download
+                        modalSpinner.style.display = 'none';
+                        fileInfo.style.display = 'block';
+                        modalMessage.textContent = `Your ${format.toUpperCase()} file is ready for download!`;
+                        downloadLink.href = data.result.download;
+                        downloadLink.download = `${data.result.title || title}.${format}`;
+                        downloadLink.style.display = 'inline-block';
+                        
+                        // Auto download
+                        const a = document.createElement('a');
+                        a.href = data.result.download;
+                        a.download = `${data.result.title || title}.${format}`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                    } else {
+                        throw new Error('Download link not available');
+                    }
+                } catch (error) {
+                    console.error('Error preparing download:', error);
+                    modalSpinner.style.display = 'none';
+                    modalMessage.textContent = 'Sorry, there was an error preparing your download. Please try again.';
+                }
+            }
+            
+            // Event listeners
+            searchButton.addEventListener('click', () => {
+                searchVideos(searchInput.value);
+            });
+            
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    searchVideos(searchInput.value);
+                }
+            });
+
+            closeModal.addEventListener('click', () => {
+                downloadModal.style.display = 'none';
+            });
+
+            // Close modal when clicking outside
+            downloadModal.addEventListener('click', (e) => {
+                if (e.target === downloadModal) {
+                    downloadModal.style.display = 'none';
+                }
+            });
+            
+            // Optional: Load some default results on page load
+            // searchVideos('music');
+        });
     </script>
-
 </body>
 </html>
